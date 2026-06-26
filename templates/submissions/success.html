@@ -1,0 +1,11 @@
+{% extends 'submissions/base.html' %}
+{% block title %}Submitted! — WWTF Science Image Prize{% endblock %}
+{% block content %}
+<div class="card" style="text-align:center;padding:48px 24px">
+  <div style="font-size:4rem;margin-bottom:16px">🎉</div>
+  <h2 style="font-size:1.5rem;font-weight:800;color:var(--blue);margin-bottom:12px">Thank you for your submission!</h2>
+  <p style="color:var(--muted);margin-bottom:24px">We have received your images and will be in touch after the submission deadline closes on <strong>31 October 2025</strong>.</p>
+  <p style="font-size:.9rem;color:var(--muted)">Questions? Contact us at <a href="mailto:office@wwtf.at">office@wwtf.at</a></p>
+</div>
+<a href="{% url 'home' %}" class="btn btn-outline" style="margin-top:8px;max-width:240px;display:block;margin-left:auto;margin-right:auto">← Back to Prize Info</a>
+{% endblock %}

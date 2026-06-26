@@ -1,0 +1,116 @@
+{% extends 'submissions/base.html' %}
+{% block title %}WWTF Science Image Prize 2025{% endblock %}
+{% block extra_head %}
+<style>
+.hero{background:linear-gradient(135deg,var(--blue) 0%,#0055a5 100%);color:#fff;border-radius:var(--radius);padding:40px 28px;margin-bottom:20px;text-align:center}
+.hero h2{font-size:1.75rem;font-weight:800;margin-bottom:8px;letter-spacing:-.01em}
+.hero p{opacity:.9;font-size:1.05rem;margin-bottom:24px}
+.prizes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.prize{background:rgba(255,255,255,.12);border-radius:10px;padding:16px 8px;text-align:center}
+.prize .amount{font-size:1.5rem;font-weight:800;color:#ffd700}
+.prize .rank{font-size:.8rem;opacity:.8;margin-top:2px}
+.tag{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:.8rem;margin:3px}
+.info-grid{display:grid;gap:12px}
+.info-item{display:flex;gap:12px;align-items:flex-start}
+.info-icon{font-size:1.4rem;min-width:32px;text-align:center}
+.info-text h4{font-weight:700;margin-bottom:2px}
+.info-text p{color:var(--muted);font-size:.9rem}
+.deadline-banner{background:#fff3cd;border:1.5px solid #ffc107;border-radius:8px;padding:12px 16px;text-align:center;font-weight:600;margin-bottom:20px}
+</style>
+{% endblock %}
+{% block content %}
+<div class="hero">
+  <div style="font-size:.8rem;opacity:.7;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px">Open Call 2025</div>
+  <h2>WWTF Science Image Prize</h2>
+  <p>Your research, captured in one image. Show Vienna what science looks like.</p>
+  <div class="prizes">
+    <div class="prize"><div class="amount">€ 3,000</div><div class="rank">1st Place</div></div>
+    <div class="prize"><div class="amount">€ 1,000</div><div class="rank">2nd Place</div></div>
+    <div class="prize"><div class="amount">€ 1,000</div><div class="rank">3rd Place</div></div>
+  </div>
+  <a href="{% url 'submit' %}" class="btn" style="max-width:280px;margin:0 auto">Submit Your Images</a>
+</div>
+
+<div class="deadline-banner">
+  📅 Submission deadline: <strong>31 October 2025</strong>
+</div>
+
+<div class="card">
+  <div class="section-title">About the Prize</div>
+  <p style="margin-bottom:12px">The WWTF Science Image Prize celebrates the visual power of research. We invite researchers from all disciplines to submit images that reveal the beauty, complexity, or wonder of their scientific work.</p>
+  <p>Winning images will be featured in the <strong>Vienna Research Radar</strong>, WWTF's annual report, press releases, and public exhibitions — with full attribution to you as the creator.</p>
+</div>
+
+<div class="card">
+  <div class="section-title">Who Can Apply</div>
+  <div class="info-grid">
+    <div class="info-item">
+      <div class="info-icon">🎓</div>
+      <div class="info-text">
+        <h4>All career stages</h4>
+        <p>PhD students, postdocs, junior and senior researchers — everyone is welcome.</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🔬</div>
+      <div class="info-text">
+        <h4>All disciplines</h4>
+        <p>Natural sciences, social sciences, humanities, engineering, medicine, arts — no field is excluded.</p>
+        <div style="margin-top:8px">
+          <span class="tag">Life Sciences</span><span class="tag">Physics</span><span class="tag">Social Sciences</span>
+          <span class="tag">Computer Science</span><span class="tag">History</span><span class="tag">Engineering</span>
+          <span class="tag">Medicine</span><span class="tag">& more</span>
+        </div>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">📍</div>
+      <div class="info-text">
+        <h4>Based in Vienna</h4>
+        <p>You must be affiliated with a Vienna-based research institution at the time of submission.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">What We're Looking For</div>
+  <div class="info-grid">
+    <div class="info-item"><div class="info-icon">🖼️</div><div class="info-text"><h4>Visual impact</h4><p>Images that stop you in your tracks — striking composition, unexpected beauty, or striking data visualization.</p></div></div>
+    <div class="info-item"><div class="info-icon">💡</div><div class="info-text"><h4>Scientific meaning</h4><p>The image should be rooted in real research and communicate something true about your field.</p></div></div>
+    <div class="info-item"><div class="info-icon">🌍</div><div class="info-text"><h4>Accessibility</h4><p>A non-specialist should be able to appreciate the image — even without knowing the science behind it.</p></div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Submission Guidelines</div>
+  <ul style="padding-left:20px;color:var(--muted);font-size:.9rem">
+    <li style="margin-bottom:8px">Up to <strong>3 images</strong> per person</li>
+    <li style="margin-bottom:8px">Formats: <strong>JPEG, PNG, TIFF, WebP</strong></li>
+    <li style="margin-bottom:8px">Maximum file size: <strong>50 MB per image</strong> (high resolution preferred)</li>
+    <li style="margin-bottom:8px">Each image needs a title, description, and method statement</li>
+    <li style="margin-bottom:8px">You must be the copyright holder of all submitted images</li>
+    <li>No AI-generated images; post-processing is allowed</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="section-title">How It Works</div>
+  <div style="display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="background:var(--blue);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;min-width:28px">1</div>
+      <div><strong>Submit</strong> — Fill in your details and upload up to 3 images with metadata.</div>
+    </div>
+    <div style="display:flex;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div style="background:var(--blue);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;min-width:28px">2</div>
+      <div><strong>Review</strong> — A jury of scientists and science communicators evaluates all submissions.</div>
+    </div>
+    <div style="display:flex;gap:16px;padding:12px 0">
+      <div style="background:var(--blue);color:#fff;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;min-width:28px">3</div>
+      <div><strong>Awards</strong> — Winners announced at the WWTF annual event. Prizes awarded in early 2026.</div>
+    </div>
+  </div>
+</div>
+
+<a href="{% url 'submit' %}" class="btn" style="margin-top:8px">Submit Your Images →</a>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}WWTF Science Image Prize{% endblock %}</title>
+<style>
+:root{--blue:#003366;--blue-light:#0055a5;--gold:#c8963c;--bg:#f7f8fa;--card:#fff;--text:#1a1a2e;--muted:#6b7280;--border:#e2e6ea;--radius:12px;--shadow:0 2px 16px rgba(0,51,102,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;min-height:100vh}
+a{color:var(--blue-light)}
+header{background:var(--blue);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+header img{height:32px}
+header h1{font-size:1rem;font-weight:600;letter-spacing:.01em}
+.container{max-width:680px;margin:0 auto;padding:24px 16px}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:20px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--blue);color:#fff;border:none;border-radius:8px;padding:14px 28px;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;width:100%;transition:background .15s}
+.btn:hover{background:var(--blue-light)}
+.btn-outline{background:transparent;color:var(--blue);border:2px solid var(--blue)}
+.btn-outline:hover{background:var(--blue);color:#fff}
+.section-title{font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--border)}
+label{display:block;font-size:.875rem;font-weight:600;color:var(--text);margin-bottom:4px}
+input[type=text],input[type=email],select,textarea{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:1rem;font-family:inherit;color:var(--text);background:#fff;transition:border-color .15s;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue-light)}
+.field{margin-bottom:16px}
+.field-error{color:#dc2626;font-size:.8rem;margin-top:4px}
+.errorlist{color:#dc2626;font-size:.85rem;list-style:none;margin-top:4px}
+.messages{margin-bottom:16px}
+.message-error{background:#fee2e2;color:#991b1b;border-radius:8px;padding:12px 16px;margin-bottom:8px}
+.check-field{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;cursor:pointer}
+.check-field input[type=checkbox]{width:20px;height:20px;min-width:20px;border-radius:4px;border:2px solid var(--border);margin-top:2px;cursor:pointer;accent-color:var(--blue)}
+.check-field span{font-size:.9rem;line-height:1.4}
+.hint{font-size:.8rem;color:var(--muted);margin-top:3px}
+footer{text-align:center;padding:32px 16px;color:var(--muted);font-size:.85rem}
+@media(min-width:640px){.container{padding:32px 24px}.card{padding:32px}}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<header>
+  <div>
+    <div style="font-size:.75rem;opacity:.7;letter-spacing:.05em">WWTF — Vienna Science and Technology Fund</div>
+    <h1>Science Image Prize</h1>
+  </div>
+</header>
+<div class="container">
+{% if messages %}<div class="messages">{% for m in messages %}<div class="message-{{ m.tags }}">{{ m }}</div>{% endfor %}</div>{% endif %}
+{% block content %}{% endblock %}
+</div>
+<footer>© 2025 WWTF — Vienna Science and Technology Fund · <a href="https://www.wwtf.at">wwtf.at</a></footer>
+</body>
+</html>
