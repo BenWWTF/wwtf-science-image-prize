@@ -1,11 +1,17 @@
 {% extends 'submissions/base.html' %}
-{% block title %}Submitted! — WWTF Science Image Prize{% endblock %}
+{% block title %}Submitted — WWTF Science Image Prize{% endblock %}
 {% block content %}
-<div class="card" style="text-align:center;padding:48px 24px">
-  <div style="font-size:4rem;margin-bottom:16px">🎉</div>
-  <h2 style="font-size:1.5rem;font-weight:800;color:var(--blue);margin-bottom:12px">Thank you for your submission!</h2>
-  <p style="color:var(--muted);margin-bottom:24px">We have received your images and will be in touch after the submission deadline closes on <strong>31 October 2025</strong>.</p>
-  <p style="font-size:.9rem;color:var(--muted)">Questions? Contact us at <a href="mailto:office@wwtf.at">office@wwtf.at</a></p>
+<div style="padding: 60px 20px 32px; text-align: center;">
+  <div style="font-size: 3.2rem; margin-bottom: 20px; line-height:1;">🎉</div>
+  <h2 style="font-family: var(--serif); font-size: 1.7rem; letter-spacing: -.02em; color: var(--text); margin-bottom: 12px; text-wrap: balance;">Thank you.</h2>
+  <p style="color: var(--muted); font-size: .9rem; line-height: 1.65; max-width: 28ch; margin: 0 auto 24px;">
+    We've received your submission and will be in touch after the deadline closes on <strong style="color:var(--text)">31 October 2025</strong>.
+  </p>
+  <p style="color: var(--faint); font-size: .8rem;">
+    Questions? <a href="mailto:office@wwtf.at" style="color:var(--faint)">office@wwtf.at</a>
+  </p>
 </div>
-<a href="{% url 'home' %}" class="btn btn-outline" style="margin-top:8px;max-width:240px;display:block;margin-left:auto;margin-right:auto">← Back to Prize Info</a>
+<div style="padding: 0 12px;">
+  <a href="{% url 'home' %}" class="btn btn-outline">← Back to prize info</a>
+</div>
 {% endblock %}
