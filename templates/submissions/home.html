@@ -1,176 +1,537 @@
 {% extends 'submissions/base.html' %}
-{% block title %}WWTF Science Image Prize 2025{% endblock %}
-{% block extra_head %}
-<style>
-/* Hero */
-.hero { padding: 32px 20px 36px; border-bottom: 1px solid var(--border); }
-.hero__eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 16px; }
-.hero__headline { font-family: var(--serif); font-size: clamp(2.2rem, 9vw, 2.8rem); line-height: 1.05; letter-spacing: -.03em; color: var(--text); text-wrap: balance; margin-bottom: 12px; }
-.hero__sub { font-size: .9rem; color: var(--muted); line-height: 1.6; margin-bottom: 28px; max-width: 30ch; }
+{% block title %}WWTF ReFrame 2026{% endblock %}
+{% block extra_style %}
+/* ── FAQ Modal ── */
+.faq-dialog {
+  border: none; border-radius: 16px; padding: 0;
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(80vh, 720px);
+  box-shadow: 0 32px 100px rgba(0,0,0,.22), 0 4px 16px rgba(0,0,0,.1);
+  overflow: hidden;
+}
+.faq-dialog[open] {
+  display: flex; flex-direction: column;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+}
+.faq-dialog::backdrop {
+  background: rgba(24,23,21,.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.faq-dialog-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 28px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.faq-dialog-head h2 { font-size: 1.1rem; font-weight: 700; letter-spacing: -.015em; }
+.faq-close {
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); transition: background .15s;
+}
+.faq-close:hover { background: var(--surface); }
+.faq-list { overflow-y: auto; padding: 12px 0; flex: 1; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-item:last-child { border-bottom: none; }
+.faq-q {
+  width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  font-family: var(--display); font-size: .95rem; font-weight: 600; color: var(--fg);
+  transition: background .15s;
+}
+.faq-q:hover { background: var(--surface); }
+.faq-q .faq-chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--muted); transition: transform .25s; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a {
+  padding: 0 28px; font-size: .9rem; color: var(--muted); line-height: 1.7;
+  max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .3s ease;
+}
+.faq-item.open .faq-a { max-height: 300px; padding: 0 28px 20px; }
+.faq-a a { color: var(--accent); }
 
-/* Prize catalog — the distinctive element */
-.prize-catalog { border-top: 1.5px solid var(--text); margin-bottom: 28px; }
-.prize-row { display: flex; align-items: baseline; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.prize-rank { font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.prize-amount { font-family: var(--serif); font-size: 1.5rem; font-weight: 600; color: var(--gold); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.prize-row:first-child .prize-amount { font-size: 2rem; color: var(--text); }
-.prize-row:first-child .prize-rank { color: var(--text); font-size: .72rem; }
+/* ── Hero ── */
+.hero {
+  padding: 96px 0 72px;
+  background: linear-gradient(160deg, #e5f4fb 0%, #ffffff 55%);
+}
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(44px, 6.6vw, 84px);
+  line-height: 1.02; letter-spacing: -.025em;
+  margin: 0 0 20px; max-width: 18ch; font-weight: 700;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--accent);
+}
+.hero-lede { font-size: 1.15rem; color: var(--muted); max-width: 52ch; margin: 0 0 32px; line-height: 1.6; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 44px; }
+.hero-meta { display: flex; gap: 28px; flex-wrap: wrap; color: var(--muted); font-size: .84rem; border-top: 1px solid var(--border); padding-top: 24px; }
+.hero-meta span strong { color: var(--fg); font-weight: 600; }
 
-/* Deadline strip */
-.deadline-strip { background: var(--subtle); border-bottom: 1px solid var(--border); padding: 10px 20px; font-size: .78rem; color: var(--muted); text-align: center; }
-.deadline-strip strong { color: var(--accent); font-weight: 700; }
+/* ── Prize strip ── */
+.prize-strip { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.prize-strip-inner { max-width: 1180px; margin: 0 auto; padding: 0 28px; display: grid; grid-template-columns: 1fr 1fr 1fr; }
+.prize-item { padding: 28px 20px; border-right: 1px solid var(--border); }
+.prize-item:last-child { border-right: none; }
+.prize-rank {
+  font-family: var(--mono); font-size: .62rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  display: block; margin-bottom: 8px;
+}
+.prize-amount {
+  font-family: var(--display); font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700; letter-spacing: -.025em; color: var(--fg);
+  display: block; font-variant-numeric: tabular-nums;
+}
+.prize-item:first-child .prize-amount { color: var(--accent); }
+.prize-item:first-child .prize-rank { color: var(--accent); }
+.prize-delta { font-family: var(--mono); font-size: .75rem; color: var(--accent); margin-top: 4px; }
 
-/* Sections */
-.section { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+/* ── About ── */
+.about-sec { padding: 96px 0; }
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+@media(max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 32px; } }
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 22px 18px;
+  transition: box-shadow .2s;
+}
+.stat-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.06); }
+.stat-card svg { width: 18px; height: 18px; color: var(--accent); margin-bottom: 10px; }
+.stat-val { font-family: var(--display); font-size: 1.6rem; font-weight: 700; letter-spacing: -.025em; color: var(--fg); display: block; }
+.stat-desc { font-size: .78rem; color: var(--muted); margin-top: 2px; }
 
-/* Info rows */
-.info-list { display: flex; flex-direction: column; gap: 18px; }
-.info-row { display: flex; gap: 13px; align-items: flex-start; }
-.info-icon { width: 36px; height: 36px; min-width: 36px; background: var(--subtle); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
-.info-text h4 { font-size: .875rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-.info-text p { font-size: .82rem; color: var(--muted); line-height: 1.5; }
+/* ── Eligibility ── */
+.elig-sec { padding: 96px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.elig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+@media(max-width: 900px) { .elig-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 560px) { .elig-grid { grid-template-columns: 1fr; } }
+.elig-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+  padding: 26px; display: flex; flex-direction: column; gap: 12px;
+}
+.elig-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.elig-icon svg { width: 18px; height: 18px; color: #fff; }
+.elig-title { font-weight: 600; font-size: 1rem; letter-spacing: -.01em; }
+.elig-body { font-size: .875rem; color: var(--muted); line-height: 1.55; }
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.tag {
+  font-family: var(--mono); font-size: .6rem; letter-spacing: .04em;
+  background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  border-radius: 999px; padding: 2px 8px;
+}
 
-/* Tag cloud */
-.tag-cloud { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
-.tag { font-size: .68rem; background: var(--subtle); border: 1px solid var(--border); color: var(--muted); border-radius: 999px; padding: 2px 9px; }
+/* ── Guidelines ── */
+.guide-sec { padding: 96px 0; }
+.guide-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 32px; margin-top: 48px; }
+@media(max-width: 700px) { .guide-grid { grid-template-columns: 1fr; } }
+.guide-item { padding: 18px 0; border-top: 1px solid var(--border); display: flex; gap: 16px; }
+.guide-item svg { width: 18px; height: 18px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+.guide-item h4 { font-size: 1rem; font-weight: 600; letter-spacing: -.01em; margin-bottom: 5px; }
+.guide-item p { font-size: .875rem; color: var(--muted); line-height: 1.55; margin: 0; }
 
-/* Rules list */
-.rule-list { display: flex; flex-direction: column; gap: 10px; }
-.rule { display: flex; gap: 10px; font-size: .855rem; color: var(--muted); align-items: flex-start; line-height: 1.45; }
-.rule::before { content: '—'; color: var(--accent); flex-shrink: 0; }
+/* ── Steps ── */
+.steps-sec { padding: 96px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+@media(max-width: 768px) { .steps-grid { grid-template-columns: 1fr; } }
+.step-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+  padding: 26px; display: flex; flex-direction: column; gap: 12px;
+}
+.step-num {
+  font-family: var(--mono); font-size: .7rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+.step-title { font-weight: 600; font-size: 1rem; letter-spacing: -.01em; }
+.step-body { font-size: .875rem; color: var(--muted); line-height: 1.55; }
 
-/* Steps */
-.steps { display: flex; flex-direction: column; }
-.step-row { display: flex; gap: 15px; padding: 13px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
-.step-row:last-child { border-bottom: none; }
-.step-num { width: 26px; height: 26px; min-width: 26px; background: var(--accent); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: .75rem; font-weight: 700; margin-top: 1px; }
-.step-text { font-size: .875rem; color: var(--muted); line-height: 1.5; }
-.step-text strong { color: var(--text); }
-
-/* CTA at bottom */
-.section-cta { padding: 24px 20px 32px; }
-.section-cta p { font-size: .82rem; color: var(--faint); text-align: center; margin-bottom: 14px; }
-</style>
+/* ── CTA ── */
+.cta-sec {
+  margin: 0; padding: 64px 0 96px;
+}
+.cta-block {
+  max-width: 1180px; margin: 0 auto; padding: 0 28px;
+}
+.cta-inner {
+  background: var(--accent);
+  border-radius: 24px; padding: 64px 56px;
+  display: grid; grid-template-columns: 1.4fr auto; gap: 32px; align-items: center;
+}
+@media(max-width: 760px) { .cta-inner { grid-template-columns: 1fr; padding: 36px 28px; } }
+.cta-inner h2 {
+  font-family: var(--display); font-size: clamp(1.7rem, 4vw, 2.4rem);
+  font-weight: 700; letter-spacing: -.02em;
+  color: #fff; margin: 0 0 10px; line-height: 1.1; max-width: 22ch;
+}
+.cta-inner p { color: rgba(255,255,255,.85); font-size: 1rem; margin: 0; max-width: 46ch; }
+.cta-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.cta-inner .btn-w { background: #fff; color: var(--acc-hov); border-radius: 10px; padding: 13px 22px; font-size: .9rem; font-weight: 600; font-family: var(--display); border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: filter .15s; }
+.cta-inner .btn-w:hover { filter: brightness(.97); }
+.cta-inner .btn-outline-w { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 10px; padding: 13px 22px; font-size: .9rem; font-weight: 500; font-family: var(--display); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.cta-inner .btn-outline-w:hover { background: rgba(255,255,255,.1); }
 {% endblock %}
+
 {% block content %}
-
-<div class="hero">
-  <span class="hero__eyebrow">WWTF · Open Call 2025</span>
-  <h1 class="hero__headline">Your research,<br>in one image.</h1>
-  <p class="hero__sub">Show Vienna what science looks like — from any discipline, any career stage.</p>
-
-  <div class="prize-catalog">
-    <div class="prize-row">
-      <span class="prize-rank">Winner</span>
-      <span class="prize-amount">€ 3,000</span>
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="s-eyebrow--pill reveal">
+      <span class="dot"></span>
+      <span style="font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);">WWTF Open Call 2026</span>
     </div>
-    <div class="prize-row">
-      <span class="prize-rank">2nd Place</span>
-      <span class="prize-amount">€ 1,000</span>
+    <h1 class="reveal">Show Vienna what<br>science looks like <em>in one image.</em></h1>
+    <p class="hero-lede reveal">Open to all Vienna-based researchers — every discipline, every career stage. Upload up to three images and win a share of the €5,000 prize pool.</p>
+    <div class="hero-actions reveal">
+      <a href="{% url 'submit' %}" class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Submit your images
+      </a>
+      <a href="#about" class="btn btn-ghost">Learn more</a>
     </div>
-    <div class="prize-row">
-      <span class="prize-rank">3rd Place</span>
-      <span class="prize-amount">€ 1,000</span>
+    <div class="hero-meta reveal">
+      <span><strong>€ 5,000</strong> total prize pool</span>
+      <span><strong>All disciplines</strong> eligible</span>
+      <span><strong>Up to 3</strong> images per entry</span>
+      <span><strong>29 Sep 2026, 2 pm</strong> deadline</span>
     </div>
   </div>
+</section>
 
-  <a href="{% url 'submit' %}" class="btn">Submit your images →</a>
-</div>
-
-<div class="deadline-strip">
-  Deadline: <strong>31 October 2025</strong> · Results announced early 2026
-</div>
-
-<div class="section">
-  <span class="s-label">About</span>
-  <h2 class="s-title">Celebrating the visual power of research</h2>
-  <p style="font-size:.875rem; color:var(--muted); line-height:1.6;">Winning images will be featured in the <strong style="color:var(--text)">Vienna Research Radar</strong>, WWTF's annual report, press releases, and public exhibitions — with full attribution to you as creator.</p>
-</div>
-
-<div class="section">
-  <span class="s-label">Eligibility</span>
-  <div class="info-list">
-    <div class="info-row">
-      <div class="info-icon">🎓</div>
-      <div class="info-text">
-        <h4>All career stages</h4>
-        <p>PhD students, postdocs, junior and senior researchers — everyone welcome.</p>
-      </div>
+<!-- PRIZE STRIP -->
+<div class="prize-strip">
+  <div class="prize-strip-inner">
+    <div class="prize-item">
+      <span class="prize-rank">Winner</span>
+      <span class="prize-amount" data-prize="3000">€ 3,000</span>
+      <div class="prize-delta">1st place</div>
     </div>
-    <div class="info-row">
-      <div class="info-icon">🔬</div>
-      <div class="info-text">
-        <h4>All disciplines</h4>
-        <p>Natural sciences, social sciences, humanities, engineering, medicine, arts — no field excluded.</p>
-        <div class="tag-cloud">
-          <span class="tag">Life Sciences</span><span class="tag">Physics</span>
-          <span class="tag">Social Sciences</span><span class="tag">Computer Science</span>
-          <span class="tag">History</span><span class="tag">Engineering</span>
-          <span class="tag">Medicine</span><span class="tag">Mathematics</span>
-          <span class="tag">+ more</span>
+    <div class="prize-item">
+      <span class="prize-rank">2nd Place</span>
+      <span class="prize-amount" data-prize="1000">€ 1,000</span>
+      <div class="prize-delta" style="color:var(--muted);">runner-up</div>
+    </div>
+    <div class="prize-item">
+      <span class="prize-rank">3rd Place</span>
+      <span class="prize-amount" data-prize="1000">€ 1,000</span>
+      <div class="prize-delta" style="color:var(--muted);">runner-up</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about-sec" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="s-eyebrow reveal">About</div>
+        <h2 class="s-head reveal">Celebrating the visual power of research</h2>
+        <p class="s-lede reveal" style="margin-bottom:24px;">Science creates images of extraordinary beauty and insight. The WWTF ReFrame puts them in front of Vienna and the world.</p>
+        <p style="color:var(--muted);font-size:.9rem;line-height:1.65;" class="reveal">All submitted images may be featured in the <a href="https://research.wwtf.at" target="_blank" rel="noopener">Vienna Research Radar</a>, WWTF's annual report, and public science communication activities — with full attribution to the researcher and institution.</p>
+        <div style="margin-top:28px;" class="reveal">
+          <a href="{% url 'submit' %}" class="btn btn-primary">Submit your images →</a>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <span class="stat-val">All</span>
+          <span class="stat-desc">Career stages welcome</span>
+        </div>
+        <div class="stat-card reveal reveal-delay-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <span class="stat-val">Vienna</span>
+          <span class="stat-desc">Research institutions</span>
+        </div>
+        <div class="stat-card reveal reveal-delay-2">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="stat-val">€ 5,000</span>
+          <span class="stat-desc">Total prize pool</span>
+        </div>
+        <div class="stat-card reveal reveal-delay-3">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span class="stat-val">3</span>
+          <span class="stat-desc">Images per submission</span>
         </div>
       </div>
     </div>
-    <div class="info-row">
-      <div class="info-icon">📍</div>
-      <div class="info-text">
-        <h4>Vienna-based</h4>
-        <p>Affiliated with a Vienna research institution at time of submission.</p>
+  </div>
+</section>
+
+<!-- ELIGIBILITY -->
+<section class="elig-sec">
+  <div class="container">
+    <div class="s-eyebrow reveal">Eligibility</div>
+    <h2 class="s-head reveal">Open to all Vienna researchers.</h2>
+    <p class="s-lede reveal" style="margin-bottom:0;">No field excluded, no career stage excluded. If you do research in Vienna, this prize is for you.</p>
+    <div class="elig-grid">
+      <div class="elig-card reveal">
+        <div class="elig-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M22 10l-10-5L2 10l10 5 10-5z"/><path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+        </div>
+        <div>
+          <div class="elig-title">All career stages</div>
+          <p class="elig-body">PhD students, postdocs, junior and senior researchers, and professors — anyone actively doing research in Vienna.</p>
+        </div>
+      </div>
+      <div class="elig-card reveal reveal-delay-1">
+        <div class="elig-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2h-3"/><polyline points="9 3 9 11 12 8 15 11 15 3"/></svg>
+        </div>
+        <div>
+          <div class="elig-title">All disciplines</div>
+          <p class="elig-body">Natural sciences, humanities, engineering, medicine, social sciences — every field of research is eligible.</p>
+          <div class="tag-cloud"><span class="tag">Life Sciences</span><span class="tag">Physics</span><span class="tag">Medicine</span><span class="tag">Social Sciences</span><span class="tag">Computer Science</span></div>
+        </div>
+      </div>
+      <div class="elig-card reveal reveal-delay-2">
+        <div class="elig-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="elig-title">Vienna-based</div>
+          <p class="elig-body">You must be affiliated with a Vienna research institution at the time of submission. No Austrian citizenship required.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GUIDELINES -->
+<section class="guide-sec" id="guidelines">
+  <div class="container">
+    <div class="s-eyebrow reveal">Image guidelines</div>
+    <h2 class="s-head reveal">What makes a strong entry.</h2>
+    <p class="s-lede reveal" style="margin-bottom:0;">Your image should be both scientifically meaningful and visually compelling.</p>
+    <div class="guide-grid">
+      <div class="guide-item reveal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <div>
+          <h4>High resolution</h4>
+          <p>Minimum 2 MP, ideally 10 MP or higher. JPEG, PNG, TIFF, or WebP.</p>
+        </div>
+      </div>
+      <div class="guide-item reveal reveal-delay-1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div>
+          <h4>Your own copyright</h4>
+          <p>You must be the sole copyright holder. Images taken by or belonging to others are not eligible.</p>
+        </div>
+      </div>
+      <div class="guide-item reveal reveal-delay-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <div>
+          <h4>Scientifically grounded</h4>
+          <p>Images must originate from your research — microscopy, simulations, field data, measurements, etc.</p>
+        </div>
+      </div>
+      <div class="guide-item reveal reveal-delay-3">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>
+        <div>
+          <h4>Minimal post-processing</h4>
+          <p>Standard adjustments (brightness, contrast, white balance) are permitted. Composites or generative AI are not.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="steps-sec">
+  <div class="container">
+    <div class="s-eyebrow reveal">Process</div>
+    <h2 class="s-head reveal">How it works.</h2>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">Step 01</div>
+        <div class="step-title">Fill in your details</div>
+        <p class="step-body">Name, institution, position, and research field. Takes about two minutes.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">Step 02</div>
+        <div class="step-title">Upload your images</div>
+        <p class="step-body">Add 1–3 images with a title, description, and method for each. Works on mobile.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">Step 03</div>
+        <div class="step-title">Wait for the verdict</div>
+        <p class="step-body">An independent jury evaluates all submissions. Results are announced after the deadline on 29 September 2026, 2 pm.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-sec">
+  <div class="cta-block">
+    <div class="cta-inner reveal">
+      <div>
+        <h2>Ready to submit?</h2>
+        <p>Takes about 10 minutes. Works on your phone. Deadline: 29 September 2026, 2 pm.</p>
+      </div>
+      <div class="cta-btns">
+        <a href="{% url 'submit' %}" class="btn-w">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Submit images
+        </a>
+        <button type="button" class="btn-outline-w" onclick="document.getElementById('faqDialog').showModal()">FAQ</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="section">
-  <span class="s-label">What we look for</span>
-  <div class="info-list">
-    <div class="info-row">
-      <div class="info-icon">🖼️</div>
-      <div class="info-text"><h4>Visual impact</h4><p>Images that stop you — striking composition, unexpected beauty, or powerful data visualization.</p></div>
+<!-- FAQ Modal -->
+<dialog class="faq-dialog" id="faqDialog" aria-labelledby="faqDialogTitle">
+  <div class="faq-dialog-head">
+    <h2 id="faqDialogTitle">Frequently Asked Questions</h2>
+    <button class="faq-close" onclick="document.getElementById('faqDialog').close()" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="faq-list" role="list">
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-1" onclick="toggleFaq(this)">Who can submit?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-1" hidden>Any researcher affiliated with a Vienna-based research institution at the time of submission — PhD students, postdocs, junior and senior researchers, and professors. All disciplines are welcome. Austrian citizenship is not required.</div>
     </div>
-    <div class="info-row">
-      <div class="info-icon">💡</div>
-      <div class="info-text"><h4>Scientific meaning</h4><p>Rooted in real research. Communicates something true about your field.</p></div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-2" onclick="toggleFaq(this)">How many images can I submit?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-2" hidden>Up to 3 images per person. Each image needs its own title, description, and method. At least 1 image is required to submit your entry.</div>
     </div>
-    <div class="info-row">
-      <div class="info-icon">🌍</div>
-      <div class="info-text"><h4>Accessibility</h4><p>A non-specialist should be able to appreciate it — even without knowing the science.</p></div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-3" onclick="toggleFaq(this)">What are the image requirements?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-3" hidden>Minimum 2 MP, ideally 10 MP or higher. Accepted formats: JPEG, PNG, TIFF, or WebP. Max 50 MB per file. Standard adjustments (brightness, contrast, white balance) are permitted. Composite images or AI-generated content are not eligible.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-4" onclick="toggleFaq(this)">Do I need to own the copyright?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-4" hidden>Yes — you must be the sole copyright holder of every image you submit. Images produced by a colleague or third-party photographer are not eligible unless you are the confirmed rights holder.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-5" onclick="toggleFaq(this)">How will my images be used?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-5" hidden>All submitted images may be featured in the Vienna Research Radar, WWTF's annual report, social media, and other science communication activities — always with full attribution (name, institution, image title). By submitting you grant WWTF a non-exclusive licence for these purposes.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-6" onclick="toggleFaq(this)">Can I submit images from a team project?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-6" hidden>Yes, as long as you hold the copyright. If images were produced collaboratively, confirm with your co-authors or institution that you have the right to submit them individually.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-7" onclick="toggleFaq(this)">Who judges the submissions?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-7" hidden>An independent jury selected by WWTF evaluates all entries on scientific significance, visual impact, and the clarity of the accompanying description. The jury's decision is final.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-8" onclick="toggleFaq(this)">When will winners be announced?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-8" hidden>After the deadline of 29 September 2026, 2 pm. All submitters will be notified by email. Winners will be publicly announced via the WWTF website and the Vienna Research Radar.</div>
+    </div>
+    <div class="faq-item" role="listitem">
+      <button class="faq-q" aria-expanded="false" aria-controls="faq-a-9" onclick="toggleFaq(this)">Technical problems — who do I contact?<svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="faq-a" id="faq-a-9" hidden>Write to Benjamin Missbach at <a href="mailto:benjamin.missbach@wwtf.at">benjamin.missbach@wwtf.at</a> with a brief description of the issue. We aim to respond within one working day.</div>
     </div>
   </div>
-</div>
+</dialog>
+{% endblock %}
 
-<div class="section">
-  <span class="s-label">Guidelines</span>
-  <div class="rule-list">
-    <div class="rule">Up to <strong>3 images</strong> per submission</div>
-    <div class="rule">Formats: JPEG, PNG, TIFF, WebP · max 50 MB each</div>
-    <div class="rule">Each image needs a title, description, and creation method</div>
-    <div class="rule">You must hold copyright for all submitted images</div>
-    <div class="rule">No AI-generated images; post-processing allowed</div>
-  </div>
-</div>
+{% block extra_script %}
+<script>
+document.getElementById('faqDialog').addEventListener('click', function(e) {
+  if (e.target === this) this.close();
+});
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const panel = document.getElementById(btn.getAttribute('aria-controls'));
+  const isOpen = item.classList.contains('open');
+  // close all
+  document.querySelectorAll('.faq-item.open').forEach(function(el) {
+    el.classList.remove('open');
+    el.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+    el.querySelector('.faq-a').hidden = true;
+  });
+  // open this one if it was closed
+  if (!isOpen) {
+    item.classList.add('open');
+    btn.setAttribute('aria-expanded', 'true');
+    panel.hidden = false;
+  }
+}
 
-<div class="section">
-  <span class="s-label">How it works</span>
-  <div class="steps">
-    <div class="step-row">
-      <div class="step-num">1</div>
-      <p class="step-text"><strong>Submit</strong> — Fill in your details and upload up to 3 images with metadata by 31 October.</p>
-    </div>
-    <div class="step-row">
-      <div class="step-num">2</div>
-      <p class="step-text"><strong>Review</strong> — A jury of scientists and science communicators evaluates all entries.</p>
-    </div>
-    <div class="step-row">
-      <div class="step-num">3</div>
-      <p class="step-text"><strong>Awarded</strong> — Winners announced at the WWTF annual event and receive their prizes in early 2026.</p>
-    </div>
-  </div>
-</div>
+// ── Scroll reveal via IntersectionObserver ────────────────────────────────
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('is-visible'); io.unobserve(e.target); }
+    });
+  }, {threshold: 0.08, rootMargin: '0px 0px -32px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
 
-<div class="section-cta">
-  <p>Takes about 10 minutes. Works on your phone.</p>
-  <a href="{% url 'submit' %}" class="btn">Submit your images →</a>
-</div>
+// ── Prize count-up ────────────────────────────────────────────────────────
+(function(){
+  var els = document.querySelectorAll('.prize-amount[data-prize]');
+  if(!els.length) return;
+  var countIO = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var target = parseInt(e.target.dataset.prize, 10);
+      var t0 = performance.now();
+      (function run(now){
+        var t = Math.min((now - t0) / 1100, 1);
+        var eased = 1 - Math.pow(1 - t, 3);
+        e.target.textContent = '\u20AC\u202F' + Math.round(eased * target).toLocaleString('de-AT');
+        if(t < 1) requestAnimationFrame(run);
+      })(t0);
+      countIO.unobserve(e.target);
+    });
+  }, {threshold: 0.6});
+  els.forEach(function(el){ countIO.observe(el); });
+})();
 
+// ── Hero film grain ───────────────────────────────────────────────────────
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var hero = document.querySelector('.hero');
+  if(!hero) return;
+  var c = document.createElement('canvas');
+  c.width = c.height = 96;
+  c.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;opacity:.038;pointer-events:none;z-index:0;mix-blend-mode:overlay;';
+  hero.insertBefore(c, hero.firstChild);
+  var ctx = c.getContext('2d');
+  var frame = 0;
+  (function tick(){
+    requestAnimationFrame(tick);
+    if(++frame % 3) return;  // 20fps refresh
+    var img = ctx.createImageData(96, 96);
+    for(var i = 0; i < img.data.length; i += 4){
+      var v = (Math.random() * 255) | 0;
+      img.data[i] = img.data[i+1] = img.data[i+2] = v;
+      img.data[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  })();
+})();
+
+// ── Cursor viewfinder aura ────────────────────────────────────────────────
+(function(){
+  if('ontouchstart' in window) return;
+  var aura = document.createElement('div');
+  aura.style.cssText = 'position:fixed;width:400px;height:400px;border-radius:50%;pointer-events:none;z-index:9990;background:radial-gradient(circle,rgba(0,143,212,.07) 0%,transparent 68%);transform:translate(-50%,-50%);transition:opacity .5s;opacity:0;will-change:transform;';
+  document.body.appendChild(aura);
+  var ax = 0, ay = 0, mx = 0, my = 0;
+  document.addEventListener('mousemove', function(e){
+    mx = e.clientX; my = e.clientY; aura.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', function(){ aura.style.opacity = '0'; });
+  (function lerp(){
+    ax += (mx - ax) * 0.1;
+    ay += (my - ay) * 0.1;
+    aura.style.left = ax + 'px';
+    aura.style.top  = ay + 'px';
+    requestAnimationFrame(lerp);
+  })();
+})();
+</script>
 {% endblock %}

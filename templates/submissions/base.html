@@ -3,126 +3,235 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{% block title %}WWTF Science Image Prize{% endblock %}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<title>{% block title %}WWTF ReFrame{% endblock %}</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNzAuMSA2My44Ij48cmVjdCB3aWR0aD0iMTcwLjEiIGhlaWdodD0iNjMuOCIgZmlsbD0iIzAwOEZENCIvPjxwb2x5Z29uIGZpbGw9IiNmZmYiIHBvaW50cz0iMjcuNywyMyAzMSwyMyAzNS43LDM0LjMgMzkuOSwyMy40IDQwLjYsMjMuNCA0NSwzNC4zIDQ5LjYsMjMgNTIuNywyMyA0NS4zLDQwLjggNDQuNSw0MC44IDQwLjIsMjkuNyAzNS45LDQwLjggMzUuMiw0MC44Ii8+PHBvbHlnb24gZmlsbD0iI2ZmZiIgcG9pbnRzPSI2Mi44LDIzIDY2LjEsMjMgNzAuNywzNC4zIDc1LDIzLjQgNzUuNywyMy40IDgwLDM0LjMgODQuNywyMyA4Ny44LDIzIDgwLjQsNDAuOCA3OS42LDQwLjggNzUuMywyOS43IDcxLDQwLjggNzAuMiw0MC44Ii8+PHBvbHlnb24gZmlsbD0iI2ZmZiIgcG9pbnRzPSI5OS4yLDI2IDk5LjIsMjMuMSAxMTQuNSwyMy4xIDExNC41LDI2IDEwOC40LDI2IDEwOC40LDQwLjcgMTA1LjIsNDAuNyAxMDUuMiwyNiIvPjxwb2x5Z29uIGZpbGw9IiNmZmYiIHBvaW50cz0iMTI4LjIsMjMuMSAxNDAsMjMuMSAxNDAsMjYgMTMxLjMsMjYgMTMxLjMsMzEuMSAxMzguNiwzMS4xIDEzOC42LDMzLjggMTMxLjMsMzMuOCAxMzEuMyw0MC43IDEyOC4yLDQwLjciLz48cmVjdCB4PSI1Ny4zIiB5PSIxNS45IiB3aWR0aD0iMS4xIiBoZWlnaHQ9IjMxLjkiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSI5Mi4zIiB5PSIxNS45IiB3aWR0aD0iMS4xIiBoZWlnaHQ9IjMxLjkiIGZpbGw9IiNmZmYiLz48cmVjdCB4PSIxMjAuMyIgeT0iMTUuOSIgd2lkdGg9IjEuMSIgaGVpZ2h0PSIzMS45IiBmaWxsPSIjZmZmIi8+PC9zdmc+">
 <style>
 :root {
-  --cream:   #faf9f7;
-  --panel:   #ffffff;
-  --subtle:  #f2ede8;
-  --border:  #ddd8d2;
-  --bstrong: #c9c4bc;
-  --text:    #1a1916;
-  --muted:   #726f69;
-  --faint:   #a09d97;
-  --accent:  #c96442;
-  --acc-hov: #b05638;
-  --acc-soft:rgba(201,100,66,.14);
-  --acc-tint:rgba(201,100,66,.06);
-  --navy:    #003366;
-  --gold:    #c8963c;
-  --serif:   'Source Serif 4', 'Iowan Old Style', Georgia, serif;
-  --sans:    -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --bg:       #ffffff;
+  --surface:  #f4f4f4;
+  --fg:       #181715;
+  --muted:    #6b6b6a;
+  --faint:    #8a8a89;
+  --border:   #e0e0e0;
+  --accent:   #008fd4;
+  --accent-2: #00b8e0;
+  --acc-hov:  #007ab8;
+  --acc-soft: rgba(0,143,212,.12);
+  --acc-tint: rgba(0,143,212,.05);
+  --accent-dk:#006ca8;
+  --display:  system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono:     ui-monospace, 'JetBrains Mono', 'Courier New', monospace;
+  --ease:     cubic-bezier(.22,.68,0,1.2);
+  --ease-std: cubic-bezier(.4,0,.2,1);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--sans); background: var(--cream); color: var(--text); font-size: 16px; line-height: 1.65; min-height: 100vh; }
-a { color: var(--accent); }
-
-.site-header {
-  background: var(--navy);
-  padding: 14px 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  font-family: var(--display);
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
-.hd-org { font-size: .65rem; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); display: block; margin-bottom: 1px; }
-.hd-title { font-family: var(--serif); font-size: 1rem; color: #fff; font-weight: 400; letter-spacing: -.005em; }
-.hd-badge { font-size: .63rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--accent); color: #fff; padding: 4px 10px; border-radius: 5px; white-space: nowrap; }
+a { color: var(--accent); text-decoration: none; }
+img { max-width: 100%; display: block; }
 
-.container { max-width: 680px; margin: 0 auto; padding: 0 0 80px; }
-@media(min-width: 640px) { .container { padding: 0 0 100px; } }
+/* ── Nav ── */
+.nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,.75);
+  backdrop-filter: saturate(180%) blur(14px);
+  -webkit-backdrop-filter: saturate(180%) blur(14px);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
+  display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 1180px; width: 100%; margin: 0 auto; padding: 0 28px;
+  display: flex; align-items: center; gap: 32px;
+}
+.nav__brand { display: flex; flex-direction: column; gap: 1px; }
+.nav__org {
+  font-family: var(--mono); font-size: .62rem; font-weight: 500;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted); line-height: 1;
+}
+.nav__name { font-size: .95rem; color: var(--fg); font-weight: 700; line-height: 1.2; letter-spacing: -.01em; }
+.nav-spacer { flex: 1; }
+.nav__pill {
+  font-family: var(--mono); font-size: .6rem; font-weight: 600;
+  letter-spacing: .07em; text-transform: uppercase;
+  background: var(--accent); color: #fff;
+  padding: 4px 10px; border-radius: 4px;
+}
 
-/* Cards */
-.card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px 20px; margin: 0 12px 16px; }
-@media(min-width: 480px) { .card { margin: 0 16px 16px; padding: 26px 24px; } }
-
-/* Section labels */
-.s-label { font-size: .63rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-bottom: 14px; display: block; }
-.s-title { font-family: var(--serif); font-size: 1.2rem; letter-spacing: -.015em; color: var(--text); margin-bottom: 10px; text-wrap: balance; }
-
-/* Buttons */
+/* ── Buttons ── */
 .btn {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: var(--accent); color: #fff; border: none;
-  border-radius: 10px; padding: 15px 24px;
-  font-size: .925rem; font-weight: 600; cursor: pointer;
-  text-decoration: none; width: 100%; font-family: var(--sans);
-  letter-spacing: .01em; transition: background .15s, transform .1s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 10px; cursor: pointer; font-family: var(--display);
+  font-weight: 500; letter-spacing: .01em; text-decoration: none; border: none;
+  transition: background .15s var(--ease-std), filter .15s, transform .15s var(--ease), box-shadow .15s;
+  font-size: .9rem; padding: 13px 22px;
 }
-.btn:hover { background: var(--acc-hov); transform: translateY(-1px); color: #fff; }
-.btn:active { transform: translateY(0); }
-.btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
-.btn-outline:hover { background: var(--accent); color: #fff; }
+.btn-primary { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+.btn-primary:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); filter: none; }
+.btn-ghost { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--surface); }
+.btn-outline-dark { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn-outline-dark:hover { background: var(--accent); color: #fff; }
 
-/* Form elements */
-label.f-label { display: block; font-size: .65rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-input[type=text], input[type=email], select, textarea {
-  width: 100%; border: 1.5px solid var(--border); border-radius: 7px;
-  padding: 11px 13px; font-size: .925rem; font-family: var(--sans);
-  color: var(--text); background: var(--cream);
-  transition: border-color .15s, box-shadow .15s; -webkit-appearance: none;
+/* ── Scroll reveal ── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--ease-std), transform .6s var(--ease-std); }
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: .08s; }
+.reveal-delay-2 { transition-delay: .16s; }
+.reveal-delay-3 { transition-delay: .24s; }
+.reveal-delay-4 { transition-delay: .32s; }
+@media(prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
 }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--acc-soft); }
+
+/* ── Shared section layout ── */
+.container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.s-eyebrow {
+  font-family: var(--mono); font-size: .72rem; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--accent); margin-bottom: 12px;
+}
+.s-eyebrow--pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 999px; padding: 5px 12px; margin-bottom: 20px;
+}
+.s-eyebrow--pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.s-head {
+  font-family: var(--display); font-size: clamp(2rem, 4.2vw, 3rem);
+  font-weight: 700; letter-spacing: -.025em; line-height: 1.05;
+  margin-bottom: 16px;
+}
+.s-head em { font-style: normal; background: linear-gradient(120deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.s-lede { font-size: 1.05rem; color: var(--muted); max-width: 56ch; margin-bottom: 48px; }
+
+/* ── Form base ── */
+label.f-label {
+  display: block; font-family: var(--mono); font-size: .75rem; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--fg); margin-bottom: 6px;
+}
+input[type=text], input[type=email], select, textarea {
+  width: 100%; border: 1px solid var(--border); border-radius: 8px;
+  padding: 11px 13px; font-size: .925rem; font-family: var(--display);
+  color: var(--fg); background: var(--bg);
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--acc-soft);
+}
 select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' stroke='%23a09d97' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 5 5-5' stroke='%23a0a0a0' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 13px center; padding-right: 34px;
 }
 .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media(max-width: 420px) { .f-row { grid-template-columns: 1fr; } }
 .f-field { margin-bottom: 14px; }
-.f-field:last-child { margin-bottom: 0; }
-.field-error { color: #9c2a25; font-size: .77rem; margin-top: 4px; }
+.field-error { color: #c0392b; font-size: .77rem; margin-top: 4px; }
 .hint { font-size: .75rem; color: var(--faint); margin-top: 4px; line-height: 1.4; }
-
-/* Checkbox */
 .check-row {
   display: flex; gap: 11px; align-items: flex-start;
-  padding: 11px 13px; border: 1.5px solid var(--border);
-  border-radius: 8px; margin-bottom: 8px; cursor: pointer;
-  transition: border-color .15s, background .15s;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 8px; cursor: pointer;
+  transition: border-color .2s, background .2s;
 }
 .check-row:hover { border-color: var(--accent); background: var(--acc-tint); }
 .check-row input[type=checkbox] { width: 17px; height: 17px; min-width: 17px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; }
 .check-row span { font-size: .845rem; line-height: 1.5; color: var(--muted); }
 
-.messages { padding: 0 12px; margin-bottom: 12px; }
+.messages { padding: 0 16px; margin-bottom: 12px; }
 .message-error { background: #fdecea; color: #9c2a25; border: 1px solid #f5c6c2; border-radius: 8px; padding: 11px 14px; font-size: .875rem; }
 
-footer { border-top: 1px solid var(--border); padding: 24px 20px; text-align: center; color: var(--faint); font-size: .78rem; margin-top: 20px; }
-footer a { color: var(--faint); }
+{% block extra_style %}{% endblock %}
+
+@media(max-width:480px){
+  .nav-inner{padding:0 16px;gap:16px;}
+  .container{padding:0 16px;}
+}
 </style>
 {% block extra_head %}{% endblock %}
 </head>
 <body>
-<header class="site-header">
-  <div>
-    <span class="hd-org">WWTF Vienna</span>
-    <span class="hd-title">Science Image Prize</span>
+<nav class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="/" style="display:flex;align-items:center;gap:14px;text-decoration:none;">
+      <svg viewBox="0 0 170.1 63.8" height="30" style="display:block;flex-shrink:0;border-radius:3px;" xmlns="http://www.w3.org/2000/svg">
+        <rect width="170.1" height="63.8" fill="#008FD4"/>
+        <polygon fill="#ffffff" points="27.7,23 31,23 35.7,34.3 39.9,23.4 40.6,23.4 45,34.3 49.6,23 52.7,23 45.3,40.8 44.5,40.8 40.2,29.7 35.9,40.8 35.2,40.8"/>
+        <polygon fill="#ffffff" points="62.8,23 66.1,23 70.7,34.3 75,23.4 75.7,23.4 80,34.3 84.7,23 87.8,23 80.4,40.8 79.6,40.8 75.3,29.7 71,40.8 70.2,40.8"/>
+        <polygon fill="#ffffff" points="99.2,26 99.2,23.1 114.5,23.1 114.5,26 108.4,26 108.4,40.7 105.2,40.7 105.2,26"/>
+        <polygon fill="#ffffff" points="128.2,23.1 140,23.1 140,26 131.3,26 131.3,31.1 138.6,31.1 138.6,33.8 131.3,33.8 131.3,40.7 128.2,40.7"/>
+        <rect x="57.3" y="15.9" width="1.1" height="31.9" fill="#ffffff"/>
+        <rect x="92.3" y="15.9" width="1.1" height="31.9" fill="#ffffff"/>
+        <rect x="120.3" y="15.9" width="1.1" height="31.9" fill="#ffffff"/>
+      </svg>
+      <div class="nav__brand">
+        <span class="nav__org">Vienna</span>
+        <span class="nav__name">ReFrame</span>
+      </div>
+    </a>
+    <div class="nav-spacer"></div>
   </div>
-  <span class="hd-badge">Open Call 2025</span>
-</header>
+</nav>
 
-<div class="container">
-{% if messages %}<div class="messages">{% for m in messages %}<div class="message-{{ m.tags }}">{{ m }}</div>{% endfor %}</div>{% endif %}
 {% block content %}{% endblock %}
-</div>
 
-<footer>
-  © 2025 WWTF — Vienna Science and Technology Fund ·
-  <a href="https://www.wwtf.at" target="_blank" rel="noopener">wwtf.at</a> ·
-  <a href="mailto:office@wwtf.at">office@wwtf.at</a>
+{% block page_footer %}
+<footer style="border-top:1px solid var(--border);padding:36px 0 52px;color:var(--muted);font-size:.84rem;">
+  <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:28px;">
+    <span>© 2026 WWTF — Wiener Wissenschafts-, Forschungs- und Technologiefonds</span>
+    <span style="display:flex;gap:20px;flex-wrap:wrap;">
+      <a href="https://research.wwtf.at" target="_blank" rel="noopener" style="color:var(--muted);">Vienna Research Radar</a>
+      <a href="https://www.wwtf.at" target="_blank" rel="noopener" style="color:var(--muted);">wwtf.at</a>
+      <a href="mailto:office@wwtf.at" style="color:var(--muted);">office@wwtf.at</a>
+    </span>
+  </div>
+  <div class="container" style="border-top:1px solid var(--border);padding-top:24px;">
+    <details style="font-size:.78rem;color:var(--muted);" lang="de">
+      <summary style="cursor:pointer;font-family:var(--mono);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);list-style:none;display:flex;align-items:center;gap:8px;user-select:none;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        Impressum
+      </summary>
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px 40px;line-height:1.7;">
+        <div>
+          <strong style="color:var(--fg);font-size:.8rem;">Herausgeber</strong><br>
+          Wiener Wissenschafts-, Forschungs- und Technologiefonds (WWTF)<br>
+          Schlickgasse 3/12, 1090 Wien, Österreich<br>
+          Gemeinnütziger Fonds nach dem Wiener Landes-Stiftungs- und Fondsgesetz
+        </div>
+        <div>
+          <strong style="color:var(--fg);font-size:.8rem;">Kontakt</strong><br>
+          Tel: <a href="tel:+4314023143" style="color:var(--muted);">+43 1 402 31 43 0</a><br>
+          Fax: +43 1 402 31 43 20<br>
+          E-Mail: <a href="mailto:office@wwtf.at" style="color:var(--muted);">office@wwtf.at</a><br>
+          Web: <a href="https://www.wwtf.at" target="_blank" rel="noopener" style="color:var(--muted);">wwtf.at</a>
+        </div>
+        <div>
+          <strong style="color:var(--fg);font-size:.8rem;">Rechtliches</strong><br>
+          Aufsichtsbehörde: Magistratsabteilung 62 der Wiener Landesregierung<br>
+          UID-Nr: ATU 61014413
+        </div>
+      </div>
+    </details>
+  </div>
 </footer>
+{% endblock %}
+
+<script>
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in-view'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
+{% block extra_script %}{% endblock %}
 </body>
 </html>

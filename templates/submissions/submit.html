@@ -1,300 +1,503 @@
 {% extends 'submissions/base.html' %}
-{% block title %}Submit — WWTF Science Image Prize{% endblock %}
-{% block extra_head %}
-<style>
-.back-nav { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--muted); padding: 12px 20px 0; text-decoration: none; }
-.back-nav:hover { color: var(--accent); }
+{% block title %}Submit — WWTF ReFrame{% endblock %}
+{% block extra_style %}
+.form-layout {
+  max-width: 1180px; margin: 0 auto; padding: 32px 28px 120px;
+  display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start;
+}
+@media(max-width: 900px) { .form-layout { grid-template-columns: 1fr; } }
 
-.progress { height: 3px; background: var(--border); margin: 12px 20px 24px; border-radius: 2px; overflow: hidden; }
-.progress-fill { height: 100%; background: var(--accent); width: 55%; border-radius: 2px; }
+.form-header { margin-bottom: 24px; }
+.form-header h1 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 700; letter-spacing: -.025em; margin-bottom: 6px; }
+.form-header p { font-size: .9rem; color: var(--muted); }
+
+.progress-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 28px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0; transition: width .4s var(--ease-std); }
+
+.f-card {
+  background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
+  margin-bottom: 16px; overflow: hidden;
+}
+.f-card-head {
+  padding: 14px 20px 0; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border); padding-bottom: 14px;
+}
+.f-card-head svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
+.f-card-title { font-weight: 600; font-size: .9rem; letter-spacing: -.01em; }
+.f-card-body { padding: 20px; }
 
 /* Image slots */
-.image-slots { display: flex; flex-direction: column; gap: 14px; margin-bottom: 0; }
-.image-slot { display: none; }
-.image-slot.active { display: block; }
+.img-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.img-section-label { font-weight: 600; font-size: .9rem; display: flex; align-items: center; gap: 8px; }
+.img-section-label svg { width: 15px; height: 15px; color: var(--accent); }
+.img-section-hint { font-family: var(--mono); font-size: .68rem; color: var(--faint); letter-spacing: .04em; }
 
-.slot-wrap { border: 1.5px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color .2s; margin: 0 12px; }
-.slot-wrap.has-image { border-color: var(--accent); }
-@media(min-width: 480px) { .slot-wrap { margin: 0 16px; } }
-
-.slot-header { background: var(--subtle); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; }
-.slot-badge { font-size: .63rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--faint); }
-.slot-wrap.has-image .slot-badge { color: var(--accent); }
-.remove-btn { background: none; border: none; font-size: .77rem; color: var(--faint); cursor: pointer; font-family: var(--sans); padding: 3px 7px; border-radius: 5px; transition: color .15s, background .15s; }
-.remove-btn:hover { color: #9c2a25; background: #fdecea; }
-
+.slot-frame {
+  border: 1px solid var(--border); border-radius: 12px;
+  margin-bottom: 12px; overflow: hidden;
+  transition: border-color .2s;
+}
+.slot-frame.loaded { border-color: var(--accent); }
+.slot-head {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 10px 16px; display: flex; align-items: center; justify-content: space-between;
+}
+.slot-badge {
+  font-family: var(--mono); font-size: .62rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.slot-frame.loaded .slot-badge { color: var(--accent); }
+.slot-badge svg { width: 12px; height: 12px; }
 .slot-body { padding: 16px; }
 
-/* Drop zone */
-.drop-zone {
-  border: 1.5px dashed var(--bstrong); border-radius: 9px;
-  background: var(--cream); display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 7px;
-  padding: 30px 16px; cursor: pointer;
-  transition: border-color .2s, background .2s;
-  text-align: center; position: relative; min-height: 120px;
+.dz {
+  border: 1.5px dashed var(--border); border-radius: 8px;
+  padding: 28px 16px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  margin-bottom: 12px;
 }
-.drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); background: var(--acc-tint); }
-.drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; font-size: 0; }
-.dz-icon { font-size: 1.7rem; opacity: .5; }
-.dz-main { font-size: .845rem; color: var(--muted); line-height: 1.4; }
+.dz:hover { border-color: var(--accent); background: var(--acc-tint); }
+.dz svg { width: 24px; height: 24px; color: var(--faint); transition: color .2s; }
+.dz:hover svg { color: var(--accent); }
+.dz-main { font-size: .84rem; color: var(--muted); }
 .dz-main strong { color: var(--accent); }
-.dz-hint { font-size: .7rem; color: var(--faint); }
+.dz-sub { font-family: var(--mono); font-size: .65rem; color: var(--faint); letter-spacing: .04em; }
+.dz input[type=file] { opacity: 0; position: absolute; width: 1px; height: 1px; pointer-events: none; }
 
-.preview-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 6px; display: none; }
-.clear-btn { display: none; background: none; border: none; font-size: .77rem; color: var(--faint); cursor: pointer; text-decoration: underline; font-family: var(--sans); padding: 0 0 12px; }
-
-.slot-fields { margin-top: 14px; display: flex; flex-direction: column; gap: 13px; }
-
-/* Add button */
-.add-btn {
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: calc(100% - 24px); margin: 0 12px;
-  border: 1.5px dashed var(--bstrong); border-radius: 10px;
-  padding: 14px; background: none; color: var(--muted);
-  font-size: .855rem; font-weight: 600; font-family: var(--sans); cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+.img-preview { position: relative; margin-bottom: 12px; }
+.img-preview img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; display: block; }
+.img-change {
+  position: absolute; bottom: 8px; right: 8px;
+  font-family: var(--mono); font-size: .62rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  background: rgba(255,255,255,.9); color: var(--fg); border: 1px solid var(--border);
+  border-radius: 6px; padding: 5px 10px; cursor: pointer; border: none;
 }
-.add-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); background: var(--acc-tint); }
-.add-btn:disabled { opacity: .3; cursor: not-allowed; }
-@media(min-width: 480px) { .add-btn { width: calc(100% - 32px); margin: 0 16px; } }
 
-/* Card used for person + declarations */
-.form-card { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 22px 18px; margin: 0 12px 16px; }
-@media(min-width: 480px) { .form-card { padding: 26px 22px; margin: 0 16px 16px; } }
-.form-card__title { font-family: var(--serif); font-size: 1.05rem; letter-spacing: -.01em; color: var(--text); margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-
-/* Sticky submit */
-.submit-footer {
-  position: sticky; bottom: 0;
-  background: linear-gradient(transparent, var(--cream) 30%);
-  padding: 20px 12px 10px; margin-top: 6px;
+/* Sidebar */
+.form-sidebar { position: sticky; top: 80px; }
+.sidebar-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 22px; margin-bottom: 14px;
 }
-@media(min-width: 480px) { .submit-footer { padding: 20px 16px 10px; } }
-
-.img-hint {
-  margin: 0 12px 14px; padding: 12px 14px;
-  background: var(--subtle); border-radius: 8px;
-  font-size: .8rem; color: var(--muted); line-height: 1.5;
+.sidebar-card-title {
+  font-family: var(--mono); font-size: .65rem; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
 }
-@media(min-width: 480px) { .img-hint { margin: 0 16px 14px; } }
-</style>
+.prize-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .875rem; }
+.prize-row:last-child { border-bottom: none; }
+.prize-row-rank { color: var(--muted); }
+.prize-row-amt { font-weight: 700; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.prize-row:first-child .prize-row-amt { color: var(--accent); }
+.dl-item { margin-bottom: 10px; font-size: .84rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+.dl-item svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; margin-top: 3px; }
+
+/* Add image button */
+.add-img-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 13px 18px; margin-bottom: 12px;
+  border: 1.5px dashed var(--border); border-radius: 12px;
+  background: transparent; color: var(--muted); font-family: var(--display);
+  font-size: .875rem; font-weight: 500; cursor: pointer;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.add-img-btn:hover { border-color: var(--accent); background: var(--acc-tint); color: var(--accent); }
+.add-img-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* Back link */
+.back-link { display:inline-flex; align-items:center; gap:6px; color:var(--muted); font-size:.84rem; margin-bottom:20px; text-decoration:none; transition:color .15s; }
+.back-link:hover, .back-link:focus { color:var(--accent); }
+
+/* Fixed submit bar */
+.submit-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: saturate(180%) blur(14px);
+  border-top: 1px solid var(--border);
+  padding: 12px 28px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.submit-bar-hint { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+.submit-bar-hint strong { color: var(--fg); font-size: .8rem; }
+.submit-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; border: none; border-radius: 10px;
+  padding: 13px 24px; font-size: .9rem; font-weight: 600; font-family: var(--display);
+  cursor: pointer; transition: filter .15s;
+  white-space: nowrap; min-width: 180px; justify-content: center;
+}
+.submit-btn:hover { filter: brightness(1.06); }
+.submit-btn svg { width: 15px; height: 15px; }
 {% endblock %}
+
 {% block content %}
-
-<a href="{% url 'home' %}" class="back-nav">← Prize info</a>
-<div class="progress"><div class="progress-fill"></div></div>
-
-<form method="post" enctype="multipart/form-data" id="submitForm" novalidate>
-{% csrf_token %}
-
-<!-- About you -->
-<div class="form-card">
-  <div class="form-card__title">About you</div>
-
-  <div class="f-row">
-    <div class="f-field">
-      <label class="f-label" for="id_first_name">First name *</label>
-      {{ person_form.first_name }}
-      {% for e in person_form.first_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+<div class="form-layout">
+  <main>
+    <div class="form-header">
+      <a href="{% url 'home' %}" class="back-link">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to prize info
+      </a>
+      <h1>Submit your images</h1>
+      <p>Fill in your details and upload 1–3 images with metadata.</p>
     </div>
-    <div class="f-field">
-      <label class="f-label" for="id_last_name">Last name *</label>
-      {{ person_form.last_name }}
-      {% for e in person_form.last_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Form completion"><div class="progress-fill" id="progressFill"></div></div>
+
+    {% if messages %}
+    <div class="messages">
+      {% for m in messages %}<div class="message-error">{{ m }}</div>{% endfor %}
     </div>
-  </div>
+    {% endif %}
 
-  <div class="f-field">
-    <label class="f-label" for="id_email">Email address *</label>
-    {{ person_form.email }}
-    <div class="hint">Use your institutional email. One submission per address.</div>
-    {% for e in person_form.email.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-  </div>
+    <form method="post" enctype="multipart/form-data" id="submitForm">
+      {% csrf_token %}
 
-  <div class="f-field">
-    <label class="f-label" for="id_institution">Institution *</label>
-    {{ person_form.institution }}
-    {% for e in person_form.institution.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-  </div>
-
-  <div class="f-row">
-    <div class="f-field">
-      <label class="f-label" for="id_position">Position *</label>
-      {{ person_form.position }}
-      {% for e in person_form.position.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-    </div>
-    <div class="f-field">
-      <label class="f-label" for="id_research_field">Research field *</label>
-      {{ person_form.research_field }}
-      {% for e in person_form.research_field.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-    </div>
-  </div>
-
-  <div class="f-field">
-    <label class="f-label" for="id_orcid">ORCID <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(optional)</span></label>
-    {{ person_form.orcid }}
-    <div class="hint">e.g. 0000-0002-1825-0097</div>
-  </div>
-</div>
-
-<!-- Images -->
-<div style="padding: 0 0 4px;">
-  <div style="padding: 8px 20px 10px; display:flex; align-items:baseline; justify-content:space-between;">
-    <span style="font-family:var(--serif); font-size:1.05rem; letter-spacing:-.01em; color:var(--text);">Your images</span>
-    <span style="font-size:.72rem; color:var(--faint);">1–3 images</span>
-  </div>
-  <div class="img-hint">Upload at least one image. Each needs a title, plain-language description, and creation method. High resolution preferred — up to 50 MB per file.</div>
-
-  <div class="image-slots" id="imageSlots">
-    {% for form in image_forms %}
-    <div class="image-slot{% if forloop.first %} active{% endif %}" id="slot{{ forloop.counter0 }}">
-      <div class="slot-wrap" id="slotWrap{{ forloop.counter0 }}">
-        <div class="slot-header">
-          <span class="slot-badge">Image {{ forloop.counter }}</span>
-          {% if not forloop.first %}
-          <button type="button" class="remove-btn" onclick="removeSlot({{ forloop.counter0 }})">✕ Remove</button>
-          {% endif %}
+      <!-- Person card -->
+      <div class="f-card">
+        <div class="f-card-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span class="f-card-title">About you</span>
         </div>
-        <div class="slot-body">
-          <div class="drop-zone" id="dropzone{{ forloop.counter0 }}">
-            <input type="file" name="img{{ forloop.counter0 }}-file" id="id_img{{ forloop.counter0 }}-file"
-                   accept="image/*" onchange="onFileChange({{ forloop.counter0 }}, this)">
-            <div class="dz-icon">📷</div>
-            <div class="dz-main"><strong>Tap to choose or photograph</strong><br>JPEG · PNG · TIFF · WebP</div>
-            <span class="dz-hint">Max 50 MB · Drag &amp; drop on desktop</span>
+        <div class="f-card-body">
+          <div class="f-row">
+            <div class="f-field">
+              <label class="f-label" for="{{ person_form.first_name.id_for_label }}">First name *</label>
+              {{ person_form.first_name }}
+              {% if person_form.first_name.errors %}<div class="field-error">{{ person_form.first_name.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="f-field">
+              <label class="f-label" for="{{ person_form.last_name.id_for_label }}">Last name *</label>
+              {{ person_form.last_name }}
+              {% if person_form.last_name.errors %}<div class="field-error">{{ person_form.last_name.errors.0 }}</div>{% endif %}
+            </div>
           </div>
-          <img class="preview-img" id="preview{{ forloop.counter0 }}" src="" alt="">
-          <button type="button" class="clear-btn" id="clearBtn{{ forloop.counter0 }}" onclick="clearFile({{ forloop.counter0 }})">Change image</button>
-          {% for e in form.file.errors %}<div class="field-error" style="margin-bottom:8px">{{ e }}</div>{% endfor %}
-
-          <div class="slot-fields">
+          <div class="f-field">
+            <label class="f-label" for="{{ person_form.email.id_for_label }}">Email address *</label>
+            {{ person_form.email }}
+            {% if person_form.email.errors %}<div class="field-error">{{ person_form.email.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="f-field">
+            <label class="f-label" for="{{ person_form.institution.id_for_label }}">Institution *</label>
+            {{ person_form.institution }}
+            {% if person_form.institution.errors %}<div class="field-error">{{ person_form.institution.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="f-row">
             <div class="f-field">
-              <label class="f-label">Image title *</label>
-              <input type="text" name="img{{ forloop.counter0 }}-title"
-                     value="{{ form.title.value|default:'' }}"
-                     placeholder="A descriptive title for this image">
-              {% for e in form.title.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+              <label class="f-label" for="{{ person_form.position.id_for_label }}">Position *</label>
+              {{ person_form.position }}
+              {% if person_form.position.errors %}<div class="field-error">{{ person_form.position.errors.0 }}</div>{% endif %}
             </div>
             <div class="f-field">
-              <label class="f-label">What does this image show? *</label>
-              <textarea name="img{{ forloop.counter0 }}-description" rows="3"
-                        placeholder="Describe what the viewer is seeing, in plain language">{{ form.description.value|default:'' }}</textarea>
-              {% for e in form.description.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+              <label class="f-label" for="{{ person_form.research_field.id_for_label }}">Research field *</label>
+              {{ person_form.research_field }}
+              {% if person_form.research_field.errors %}<div class="field-error">{{ person_form.research_field.errors.0 }}</div>{% endif %}
             </div>
-            <div class="f-field">
-              <label class="f-label">How was it created? *</label>
-              <input type="text" name="img{{ forloop.counter0 }}-method"
-                     value="{{ form.method.value|default:'' }}"
-                     placeholder="e.g. Confocal microscopy, aerial photography, data viz">
-              {% for e in form.method.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
-            </div>
-            <div class="f-field">
-              <label class="f-label">Scientific context <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:.75rem">(optional)</span></label>
-              <textarea name="img{{ forloop.counter0 }}-scientific_context" rows="2"
-                        placeholder="Which project or finding does this relate to?">{{ form.scientific_context.value|default:'' }}</textarea>
-            </div>
+          </div>
+          <div class="f-field" style="margin-bottom:0;">
+            <label class="f-label" for="{{ person_form.orcid.id_for_label }}">ORCID <span style="font-weight:400;color:var(--faint);">(optional)</span></label>
+            {{ person_form.orcid }}
+            <div class="hint">e.g. 0000-0002-1825-0097</div>
           </div>
         </div>
       </div>
-    </div>
-    {% endfor %}
-  </div>
 
-  <button type="button" class="add-btn" id="addBtn" onclick="addSlot()" style="margin-top:14px">
-    + Add another image
+      <!-- Images -->
+      <div class="img-section-head">
+        <div class="img-section-label">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Your images
+        </div>
+        <span class="img-section-hint">1–3 images · 1 required</span>
+      </div>
+
+      {% for img_form in image_forms %}
+      {% if not forloop.first %}
+      <button type="button" class="add-img-btn" id="addBtn{{ forloop.counter0 }}" onclick="openExtraSlot({{ forloop.counter0 }})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add image {{ forloop.counter }} <span style="font-weight:400;opacity:.6;">(optional)</span>
+      </button>
+      <div class="extra-slot" id="extraSlot{{ forloop.counter0 }}" style="display:none">
+      {% endif %}
+      <div class="slot-frame" id="slot{{ forloop.counter0 }}">
+        <div class="slot-head">
+          <span class="slot-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Image {{ forloop.counter }}{% if forloop.first %} *{% endif %}
+          </span>
+          {% if not forloop.first %}
+          <button type="button" style="background:none;border:none;cursor:pointer;color:var(--faint);font-size:.75rem;font-family:var(--mono);letter-spacing:.04em;" onclick="closeExtraSlot({{ forloop.counter0 }})">Remove</button>
+          {% endif %}
+        </div>
+        <div class="slot-body">
+          <div class="img-preview" id="preview{{ forloop.counter0 }}" style="display:none;">
+            <img id="previewImg{{ forloop.counter0 }}" src="" alt="">
+            <button type="button" class="img-change" onclick="clearImg({{ forloop.counter0 }})">Change</button>
+          </div>
+          <div class="dz" id="dz{{ forloop.counter0 }}" role="button" tabindex="0"
+               onclick="document.getElementById('{{ img_form.file.id_for_label }}').click()"
+               onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('{{ img_form.file.id_for_label }}').click()}"
+               aria-label="Choose image {{ forloop.counter }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div class="dz-main"><strong>Tap to choose or photograph</strong><br>JPEG · PNG · TIFF · WebP</div>
+            <div class="dz-sub">Up to 50 MB</div>
+            <input type="file" name="{{ img_form.file.html_name }}" id="{{ img_form.file.id_for_label }}" accept="image/jpeg,image/png,image/tiff,image/webp"{% if forloop.first %} required{% endif %} onchange="handleImg({{ forloop.counter0 }}, this)">
+          </div>
+          {% if img_form.file.errors %}<div class="field-error">{{ img_form.file.errors.0 }}</div>{% endif %}
+          <div class="f-field">
+            <label class="f-label" for="{{ img_form.title.id_for_label }}">Image title *</label>
+            {{ img_form.title }}
+            {% if img_form.title.errors %}<div class="field-error">{{ img_form.title.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="f-field">
+            <label class="f-label" for="{{ img_form.description.id_for_label }}">What does it show? *</label>
+            {{ img_form.description }}
+            {% if img_form.description.errors %}<div class="field-error">{{ img_form.description.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="f-field">
+            <label class="f-label" for="{{ img_form.method.id_for_label }}">How was it created? *</label>
+            {{ img_form.method }}
+            {% if img_form.method.errors %}<div class="field-error">{{ img_form.method.errors.0 }}</div>{% endif %}
+          </div>
+          <div class="f-field" style="margin-bottom:0;">
+            <label class="f-label" for="{{ img_form.scientific_context.id_for_label }}">Scientific context <span style="font-weight:400;color:var(--faint);">(optional)</span></label>
+            {{ img_form.scientific_context }}
+          </div>
+        </div>
+      </div>
+      {% if not forloop.first %}</div>{% endif %}
+      {% endfor %}
+
+      <!-- Declarations -->
+      <div class="f-card" style="margin-top:16px;">
+        <div class="f-card-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span class="f-card-title">Declarations</span>
+        </div>
+        <div class="f-card-body">
+          <label class="check-row">
+            {{ person_form.copyright_confirmed }}
+            <span>I confirm I am the sole copyright holder of all submitted images and they were created as part of my research.</span>
+          </label>
+          {% if person_form.copyright_confirmed.errors %}<div class="field-error" style="margin-bottom:8px;">{{ person_form.copyright_confirmed.errors.0 }}</div>{% endif %}
+          <label class="check-row">
+            {{ person_form.usage_rights_granted }}
+            <span>I grant WWTF the right to use these images for science communication purposes — including the Vienna Research Radar — with full attribution.</span>
+          </label>
+          {% if person_form.usage_rights_granted.errors %}<div class="field-error" style="margin-bottom:8px;">{{ person_form.usage_rights_granted.errors.0 }}</div>{% endif %}
+          <label class="check-row" style="margin-bottom:0;">
+            {{ person_form.terms_accepted }}
+            <span>I accept the <a href="https://wiki.wwtf.at" target="_blank" rel="noopener" style="color:var(--accent);">competition terms and conditions</a>.</span>
+          </label>
+          {% if person_form.terms_accepted.errors %}<div class="field-error">{{ person_form.terms_accepted.errors.0 }}</div>{% endif %}
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <!-- Sidebar -->
+  <aside class="form-sidebar">
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Prize pool</div>
+      <div class="prize-row"><span class="prize-row-rank">Winner</span><span class="prize-row-amt">€ 3,000</span></div>
+      <div class="prize-row"><span class="prize-row-rank">2nd place</span><span class="prize-row-amt">€ 1,000</span></div>
+      <div class="prize-row"><span class="prize-row-rank">3rd place</span><span class="prize-row-amt">€ 1,000</span></div>
+    </div>
+    <div class="sidebar-card">
+      <div class="sidebar-card-title">Guidelines</div>
+      <div class="dl-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Min. 2 MP, ideally 10 MP or higher</span>
+      </div>
+      <div class="dl-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>JPEG, PNG, TIFF, or WebP</span>
+      </div>
+      <div class="dl-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Original research images only — no composites or AI-generated images</span>
+      </div>
+      <div class="dl-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Deadline: 29 September 2026, 2 pm</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Fixed submit bar -->
+<div class="submit-bar">
+  <div class="submit-bar-hint"><strong>Deadline: 29 Sep 2026, 2 pm</strong><br>* fields required</div>
+  <button type="submit" form="submitForm" class="submit-btn" id="submitBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    Submit entry
   </button>
 </div>
+{% endblock %}
 
-<!-- Declarations -->
-<div class="form-card" style="margin-top:16px">
-  <div class="form-card__title">Declarations</div>
-
-  <label class="check-row">
-    <input type="checkbox" name="copyright_confirmed" {% if person_form.copyright_confirmed.value %}checked{% endif %}>
-    <span>I confirm I am the sole copyright holder of all submitted images.</span>
-  </label>
-  {% for e in person_form.copyright_confirmed.errors %}<div class="field-error" style="margin:-4px 0 8px">{{ e }}</div>{% endfor %}
-
-  <label class="check-row">
-    <input type="checkbox" name="usage_rights_granted" {% if person_form.usage_rights_granted.value %}checked{% endif %}>
-    <span>I grant WWTF the right to use these images for science communication, press, and publications (non-commercial, with attribution).</span>
-  </label>
-  {% for e in person_form.usage_rights_granted.errors %}<div class="field-error" style="margin:-4px 0 8px">{{ e }}</div>{% endfor %}
-
-  <label class="check-row">
-    <input type="checkbox" name="terms_accepted" {% if person_form.terms_accepted.value %}checked{% endif %}>
-    <span>I accept the competition terms and conditions.</span>
-  </label>
-  {% for e in person_form.terms_accepted.errors %}<div class="field-error" style="margin:-4px 0 8px">{{ e }}</div>{% endfor %}
-</div>
-
-<div class="submit-footer">
-  <button type="submit" class="btn" id="submitBtn">Submit application →</button>
-</div>
-</form>
-
+{% block extra_script %}
 <script>
-let activeSlots = 1;
-const MAX = 3;
-
-function addSlot() {
-  if (activeSlots >= MAX) return;
-  document.getElementById('slot' + activeSlots).classList.add('active');
-  activeSlots++;
-  document.getElementById('addBtn').disabled = activeSlots >= MAX;
+function openExtraSlot(idx) {
+  document.getElementById('addBtn' + idx).style.display = 'none';
+  var s = document.getElementById('extraSlot' + idx);
+  s.style.display = '';
+  s.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  updateProgress();
 }
-
-function removeSlot(idx) {
-  document.getElementById('slot' + idx).classList.remove('active');
-  document.getElementById('slot' + idx).querySelectorAll('input[type=text],textarea').forEach(el => el.value = '');
-  clearFile(idx);
-  activeSlots = Math.max(1, activeSlots - 1);
-  document.getElementById('addBtn').disabled = false;
+function closeExtraSlot(idx) {
+  // clear file and all text inputs so empty data isn't submitted
+  clearImg(idx);
+  var slot = document.getElementById('slot' + idx);
+  slot.querySelectorAll('input[type=text], input[type=email], textarea, select').forEach(function(el) { el.value = ''; });
+  document.getElementById('extraSlot' + idx).style.display = 'none';
+  document.getElementById('addBtn' + idx).style.display = '';
+  updateProgress();
 }
-
-function onFileChange(idx, input) {
-  if (!input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('preview' + idx).src = e.target.result;
-    document.getElementById('preview' + idx).style.display = 'block';
-    document.getElementById('dropzone' + idx).style.display = 'none';
-    document.getElementById('clearBtn' + idx).style.display = 'block';
-    document.getElementById('slotWrap' + idx).classList.add('has-image');
+function handleImg(idx, input) {
+  if (!input.files || !input.files[0]) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById('previewImg' + idx).src = e.target.result;
+    document.getElementById('previewImg' + idx).alt = input.files[0].name;
+    document.getElementById('preview' + idx).style.display = '';
+    document.getElementById('dz' + idx).style.display = 'none';
+    document.getElementById('slot' + idx).classList.add('loaded');
+    updateProgress();
   };
   reader.readAsDataURL(input.files[0]);
 }
-
-function clearFile(idx) {
-  document.getElementById('preview' + idx).src = '';
+function clearImg(idx) {
+  var fi = document.getElementById('slot' + idx).querySelector('input[type=file]');
+  if (fi) { try { fi.value = ''; } catch(e) {} }
+  document.getElementById('previewImg' + idx).src = '';
+  document.getElementById('previewImg' + idx).alt = '';
   document.getElementById('preview' + idx).style.display = 'none';
-  document.getElementById('dropzone' + idx).style.display = '';
-  document.getElementById('clearBtn' + idx).style.display = 'none';
-  document.getElementById('slotWrap' + idx).classList.remove('has-image');
-  const fi = document.getElementById('id_img' + idx + '-file');
-  if (fi) fi.value = '';
+  document.getElementById('dz' + idx).style.display = '';
+  document.getElementById('slot' + idx).classList.remove('loaded');
+  updateProgress();
 }
-
-document.querySelectorAll('.drop-zone').forEach((zone, idx) => {
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    const input = zone.querySelector('input[type=file]');
-    const dt = new DataTransfer();
-    dt.items.add(file);
-    input.files = dt.files;
-    onFileChange(idx, input);
+function updateProgress() {
+  // only count visible fields (exclude hidden extra slots)
+  var fields = Array.from(document.querySelectorAll('input[type=text], input[type=email], select, textarea')).filter(function(f) {
+    return f.offsetParent !== null;
   });
+  var filled = fields.filter(function(f) { return f.value.trim(); }).length;
+  var pct = Math.min(100, Math.round((filled / Math.max(1, fields.length)) * 100));
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.querySelector(".progress-bar").setAttribute("aria-valuenow", pct);
+}
+document.querySelectorAll('input, select, textarea').forEach(function(el) { el.addEventListener('input', updateProgress); });
+updateProgress();
+document.getElementById('submitForm').addEventListener('submit', function() {
+  var btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Uploading…';
+  btn.style.opacity = '.7';
 });
 
-document.getElementById('submitForm').addEventListener('submit', () => {
-  const btn = document.getElementById('submitBtn');
-  btn.textContent = 'Uploading… please wait';
-  btn.disabled = true;
-});
+// ── Dropzone ripple ───────────────────────────────────────────────────────
+(function(){
+  function ripple(dz, cx, cy){
+    var r = dz.getBoundingClientRect();
+    var x = (cx !== undefined ? cx : r.left + r.width/2) - r.left;
+    var y = (cy !== undefined ? cy : r.top + r.height/2) - r.top;
+    var el = document.createElement('span');
+    var size = Math.max(r.width, r.height);
+    el.style.cssText = 'position:absolute;left:'+x+'px;top:'+y+'px;width:6px;height:6px;border-radius:50%;background:var(--accent);opacity:.35;transform:translate(-50%,-50%) scale(0);transition:transform .55s cubic-bezier(.2,0,.3,1),opacity .55s;pointer-events:none;';
+    dz.style.overflow = 'hidden';
+    dz.appendChild(el);
+    requestAnimationFrame(function(){
+      el.style.transform = 'translate(-50%,-50%) scale('+(size/3)+')';
+      el.style.opacity = '0';
+    });
+    setTimeout(function(){ el.parentNode && el.parentNode.removeChild(el); }, 560);
+  }
+  document.querySelectorAll('.dz').forEach(function(dz){
+    dz.addEventListener('click', function(e){ ripple(dz, e.clientX, e.clientY); });
+    dz.addEventListener('keydown', function(e){
+      if(e.key==='Enter'||e.key===' ') ripple(dz);
+    });
+  });
+})();
+
+// ── Upload particle burst ─────────────────────────────────────────────────
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var COLORS = ['#008fd4','#00b8e0','#6bd4f5','#ffffff','#b3e9fa'];
+
+  function burst(slotFrame){
+    var r = slotFrame.getBoundingClientRect();
+    var canvas = document.createElement('canvas');
+    canvas.width = r.width; canvas.height = r.height;
+    canvas.style.cssText = 'position:absolute;left:0;top:0;pointer-events:none;z-index:20;border-radius:12px;';
+    slotFrame.style.position = 'relative';
+    slotFrame.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var N = 24;
+    var parts = [];
+    for(var i = 0; i < N; i++){
+      var angle = (Math.PI * 2 * i / N) + Math.random() * 0.5;
+      var speed = 1.8 + Math.random() * 2.8;
+      parts.push({
+        x: r.width/2, y: r.height/2,
+        vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed - 1,
+        size: 2.5 + Math.random()*2.5,
+        color: COLORS[Math.floor(Math.random()*COLORS.length)]
+      });
+    }
+    var t0 = performance.now(), dur = 680;
+    (function draw(now){
+      var t = Math.min((now - t0)/dur, 1);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      var alpha = 1 - Math.pow(t, 1.5);
+      parts.forEach(function(p){
+        p.x += p.vx; p.y += p.vy; p.vy += 0.09;
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size*(1-t*0.4), 0, Math.PI*2);
+        ctx.fill();
+      });
+      ctx.globalAlpha = 1;
+      if(t < 1) requestAnimationFrame(draw);
+      else { canvas.parentNode && canvas.parentNode.removeChild(canvas); }
+    })(t0);
+  }
+
+  // Watch for 'loaded' class being added to a slot-frame
+  var observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      if(m.type==='attributes' && m.attributeName==='class'){
+        var el = m.target;
+        if(el.classList.contains('loaded') && !el.dataset.burst){
+          el.dataset.burst = '1';
+          burst(el);
+        }
+        if(!el.classList.contains('loaded')) delete el.dataset.burst;
+      }
+    });
+  });
+  document.querySelectorAll('.slot-frame').forEach(function(s){
+    observer.observe(s, {attributes: true});
+  });
+})();
+
+// ── Magnetic submit button ────────────────────────────────────────────────
+(function(){
+  if('ontouchstart' in window) return;
+  var btn = document.getElementById('submitBtn');
+  if(!btn) return;
+  btn.addEventListener('mousemove', function(e){
+    var r = btn.getBoundingClientRect();
+    var x = ((e.clientX - r.left)/r.width  - 0.5) * 10;
+    var y = ((e.clientY - r.top) /r.height - 0.5) * 6;
+    btn.style.transform = 'translate('+x+'px,'+y+'px)';
+  });
+  btn.addEventListener('mouseleave', function(){
+    btn.style.transform = '';
+  });
+})();
 </script>
 {% endblock %}

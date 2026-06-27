@@ -4,6 +4,7 @@ from django.db import models
 
 class Submission(models.Model):
     POSITION_CHOICES = [
+        ('master', "Master's Student"),
         ('phd', 'PhD Student'),
         ('postdoc', 'Postdoc / Research Fellow'),
         ('assistant_prof', 'Assistant Professor'),

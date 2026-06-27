@@ -1,8 +1,10 @@
 from django import forms
+from PIL import Image
 from .models import Submission, SubmissionImage
 
-ALLOWED_TYPES = {'image/jpeg', 'image/png', 'image/tiff', 'image/webp'}
+ALLOWED_FORMATS = {'JPEG', 'PNG', 'TIFF', 'WEBP'}
 MAX_SIZE_MB = 50
+MAX_PIXELS = 60_000_000  # 60 MP; blocks decompression bombs while allowing large scientific images
 
 
 class PersonForm(forms.ModelForm):
@@ -50,7 +52,7 @@ class PersonForm(forms.ModelForm):
 
 
 class ImageForm(forms.Form):
-    file = forms.ImageField(required=False, widget=forms.FileInput(attrs={'accept': 'image/*', 'capture': 'environment'}))
+    file = forms.ImageField(required=False, widget=forms.FileInput(attrs={'accept': 'image/jpeg,image/png,image/tiff,image/webp'}))
     title = forms.CharField(max_length=200, required=False, widget=forms.TextInput(attrs={'placeholder': 'Image title'}))
     description = forms.CharField(
         required=False,
@@ -84,9 +86,26 @@ class ImageForm(forms.Form):
 
     def clean_file(self):
         f = self.cleaned_data.get('file')
-        if f:
-            if f.content_type not in ALLOWED_TYPES:
-                raise forms.ValidationError('Unsupported format. Use JPEG, PNG, TIFF, or WebP.')
-            if f.size > MAX_SIZE_MB * 1024 * 1024:
-                raise forms.ValidationError(f'File too large. Maximum size is {MAX_SIZE_MB} MB.')
+        if not f:
+            return f
+
+        if f.size > MAX_SIZE_MB * 1024 * 1024:
+            raise forms.ValidationError(f'File too large. Maximum size is {MAX_SIZE_MB} MB.')
+
+        # Do NOT trust f.content_type (client-supplied). Verify via Pillow.
+        try:
+            f.seek(0)
+            img = Image.open(f)
+            fmt = (img.format or '').upper()
+            width, height = img.size
+            img.verify()  # detects corrupt/truncated files; read attrs first as verify() invalidates the object
+        except Exception:
+            raise forms.ValidationError('Unsupported or corrupt image file. Use JPEG, PNG, TIFF, or WebP.')
+        finally:
+            f.seek(0)  # reset so Django can save the file
+
+        if fmt not in ALLOWED_FORMATS:
+            raise forms.ValidationError('Unsupported format. Use JPEG, PNG, TIFF, or WebP.')
+        if width * height > MAX_PIXELS:
+            raise forms.ValidationError('Image resolution too large (max 60 megapixels).')
         return f

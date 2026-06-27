@@ -2,9 +2,14 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-change-in-production-abc123xyz')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '100.112.136.40', os.environ.get('ALLOWED_HOST', '')]
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = 'dev-only-insecure-key-not-for-production'
+    else:
+        raise RuntimeError('DJANGO_SECRET_KEY environment variable is not set.')
+ALLOWED_HOSTS = [h for h in ['localhost', '127.0.0.1', '[::1]', '100.112.136.40', os.environ.get('ALLOWED_HOST', '')] if h]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,5 +80,15 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'WWTF Science Image Pr
 ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'benjamin.missbach@wwtf.at')
 
 # File upload limit: 50 MB per image
-DATA_UPLOAD_MAX_MEMORY_SIZE = 200 * 1024 * 1024
-FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
+# Files stream to disk above 2MB; 160MB cap covers 3x50MB image submissions.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 160 * 1024 * 1024
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
+
+# Security hardening
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+# Enable when HTTPS is added:
+# SECURE_SSL_REDIRECT = True
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
+# SECURE_HSTS_SECONDS = 31536000
